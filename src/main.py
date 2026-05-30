@@ -37,7 +37,7 @@ class GameState:
                 sprite.rect.center = (sprite.x, sprite.y)
 
     def create_sprites(self) -> None:
-        """Make sprites and sprite groups."""
+        """Build sprites and sprite groups."""
         player = Rectangle(game=self,
                            x=self.window.width / 2,
                            y=self.window.height / 2,
