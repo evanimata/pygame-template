@@ -85,15 +85,15 @@ class Paddle(Sprite):
     def key_hold(self, keys: pg.key.ScancodeWrapper) -> None:
         """Move sprite with key presses."""
         if self.player == 1:
-            if keys[pg.K_w]:
+            if keys[pg.K_w] and self.y - self.height / 2 > 0:
                 self.y -= self.y_velocity
-            if keys[pg.K_s]:
+            if keys[pg.K_s] and self.y + self.height / 2 < self.game.window.height:
                 self.y += self.y_velocity
 
         if self.player == 2:
-            if keys[pg.K_UP]:
+            if keys[pg.K_UP] and self.y - self.height / 2 > 0:
                 self.y -= self.y_velocity
-            if keys[pg.K_DOWN]:
+            if keys[pg.K_DOWN] and self.y + self.height / 2 < self.game.window.height:
                 self.y += self.y_velocity
 
 
