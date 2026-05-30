@@ -10,9 +10,10 @@ if TYPE_CHECKING:
 
 class Group(pg.sprite.Group):
     """Custom Pygame Group."""
-    def __init__(self) -> None:
+    def __init__(self, game: GameState) -> None:
         """Initialize a custom group."""
         super().__init__()
+        self.game = game
 
     def key_press(self, event: pg.event) -> None:
         """Call key press method for all sprites in group."""
@@ -44,14 +45,18 @@ class Sprite(pg.sprite.Sprite):
 
     def update(self) -> None:
         """Make rect attribute coordinates match x and y coordinate attributes."""
-        self.rect.x = self.x
-        self.rect.y = self.y
+        if self.game.centering:
+            self.rect.center = (self.x, self.y)
+        else:
+            self.rect.x = self.x
+            self.rect.y = self.y
 
 
-class Rectangle(Sprite):
+class Paddle(Sprite):
     """Rectangle sprite."""
     def __init__(self,
                  game: GameState,
+                 player: int,
                  x: int | float,
                  y: int | float,
                  width: int | float,
@@ -60,6 +65,7 @@ class Rectangle(Sprite):
         """DEFINE the Rectangle sprite."""
         super().__init__()
         self.game = game
+        self.player = player
 
         self.x = x
         self.y = y
@@ -77,14 +83,17 @@ class Rectangle(Sprite):
 
     def key_hold(self, keys: pg.key.ScancodeWrapper) -> None:
         """Move sprite with key presses."""
-        if keys[pg.K_LEFT]:
-            self.x -= self.x_velocity
-        if keys[pg.K_RIGHT]:
-            self.x += self.x_velocity
-        if keys[pg.K_UP]:
-            self.y -= self.y_velocity
-        if keys[pg.K_DOWN]:
-            self.y += self.y_velocity
+        if self.player == 1:
+            if keys[pg.K_w]:
+                self.y -= self.y_velocity
+            if keys[pg.K_s]:
+                self.y += self.y_velocity
+
+        if self.player == 2:
+            if keys[pg.K_UP]:
+                self.y -= self.y_velocity
+            if keys[pg.K_DOWN]:
+                self.y += self.y_velocity
 
 
 class Circle(Sprite):

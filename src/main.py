@@ -2,12 +2,13 @@
 from __future__ import annotations
 import pygame as pg
 
-from sprites import Circle, Group, Rectangle
+from sprites import Circle, Group, Paddle
 
 
 class GameState:
     """GameState class to manage the entire game."""
     running = True
+    centering = True
 
     def __init__(self) -> None:
         """Initiate Pygame constants and variables."""
@@ -23,27 +24,30 @@ class GameState:
                             )
 
         # Initialize the main sprite group.
-        self.sprites = Group()
+        self.sprites = Group(self)
         self.create_sprites()
 
         # DEFINE time-keeping variables.
         self.clock = pg.time.Clock()
         self.fps = 60
 
-    def center_all_sprites(self, activate: bool=False) -> None:
-        """Make sure all sprites are centered instead of using the top-left corner."""
-        if activate:
-            for sprite in self.sprites.sprites():
-                sprite.rect.center = (sprite.x, sprite.y)
-
     def create_sprites(self) -> None:
         """Build sprites and sprite groups."""
-        player = Rectangle(game=self,
-                           x=self.window.width / 2,
-                           y=self.window.height / 2,
-                           width=self.window.width / 8,
-                           height=self.window.height / 6,
-                           color="red")
+        player1 = Paddle(game=self,
+                         player=1,
+                         x=self.window.width / 6,
+                         y=self.window.height / 2,
+                         width=self.window.width / 16,
+                         height=self.window.height / 3,
+                         color="red")
+
+        player2 = Paddle(game=self,
+                         player=2,
+                         x=self.window.width * (5 / 6),
+                         y=self.window.height / 2,
+                         width=self.window.width / 16,
+                         height=self.window.height / 3,
+                         color="red")
 
         circle = Circle(game=self,
                         x=self.window.width / 2,
@@ -51,8 +55,7 @@ class GameState:
                         radius=self.window.width / 16,
                         color="blue")
         
-        self.sprites.add(player, circle)
-        self.center_all_sprites(activate=True)
+        self.sprites.add(player1, player2)
 
     def check_game_events(self) -> None:
         """DEFINE a for loop to check all Pygame events."""
