@@ -15,10 +15,12 @@ class Group(pg.sprite.Group):
         super().__init__()
 
     def key_press(self, event: pg.event) -> None:
+        """Call key press method for all sprites in group."""
         for sprite in self.sprites():
             sprite.key_press(event)
 
     def key_hold(self, keys: pg.key.ScancodeWrapper) -> None:
+        """Call key hold method for all sprites in group."""
         for sprite in self.sprites():
             sprite.key_hold(keys)
 
