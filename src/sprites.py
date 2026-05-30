@@ -1,6 +1,7 @@
 """Define all Pygame objects."""
 from __future__ import annotations
 import pygame as pg
+import random
 
 from typing import TYPE_CHECKING
 
@@ -96,7 +97,7 @@ class Paddle(Sprite):
                 self.y += self.y_velocity
 
 
-class Circle(Sprite):
+class Ball(Sprite):
     """Rectangle sprite."""
     def __init__(self,
                  game: GameState,
@@ -120,16 +121,39 @@ class Circle(Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = (self.x, self.y)
 
-        self.set_velocity(x_velocity=5,
-                          y_velocity=5)
+        self.randomize_velocity()
+        
+        self.cooldown = self.game.fps * 2
+        self.starting_cooldown = self.cooldown
 
-    def key_hold(self, keys: pg.key.ScancodeWrapper) -> None:
-        """Move sprite with key presses."""
-        if keys[pg.K_LEFT]:
-            self.x -= self.x_velocity*2
-        if keys[pg.K_RIGHT]:
-            self.x += self.x_velocity*2
-        if keys[pg.K_UP]:
-            self.y -= self.y_velocity*2
-        if keys[pg.K_DOWN]:
-            self.y += self.y_velocity*2
+    def randomize_velocity(self) -> None:
+        velocity_choices = [-5, -4, -3, 3, 4, 5]
+        self.set_velocity(x_velocity=random.choice(velocity_choices),
+                          y_velocity=random.choice(velocity_choices))
+
+    def return_to_center(self) -> None:
+        self.x = self.game.window.width / 2
+        self.y = self.game.window.height / 2
+
+        self.randomize_velocity()
+        self.cooldown = self.starting_cooldown
+        
+    def update(self) -> None:
+        """Make ball move on its own."""
+        super().update()
+
+        # Update cooldown.
+        if self.cooldown > 0:
+            self.cooldown -= 1
+            return None
+
+        # Continuous movement.
+        self.x += self.x_velocity
+        self.y += self.y_velocity
+
+        # Top and bottom wall bouncing.
+        if self.y + self.radius > self.game.window.height or self.y - self.radius < 0:
+            self.y_velocity *= -1
+
+        if self.x - self.radius > self.game.window.width or self.x + self.radius < 0:
+            self.return_to_center()
